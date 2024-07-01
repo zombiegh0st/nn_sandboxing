@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./.volumes/db:/data/db
+    restart: always
+
+  app:
+    image: python:3.10
+    volumes:
+      - ./scripts:/scripts
+    working_dir: /scripts
+    entrypoint: /bin/bash -c 'for script in $(ls -1 | sort); do python "$$script"; done'
+    networks:
+      - internet_access
+
+volumes:
+  mongodb_data:
+
+networks:
+  internet_access:
+    external: true
+    name: internet_access
